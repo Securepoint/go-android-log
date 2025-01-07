@@ -77,26 +77,32 @@ func (l *Logger) Fatal(msg string) {
 	l.log(FATAL, msg)
 }
 
+// Verbosef logs a formatted message with VERBOSE priority
 func (l *Logger) Verbosef(format string, args ...interface{}) {
 	l.Verbose(fmt.Sprintf(format, args...))
 }
 
+// Debugf logs a formatted message with DEBUG priority
 func (l *Logger) Debugf(format string, args ...interface{}) {
 	l.Debug(fmt.Sprintf(format, args...))
 }
 
+// Infof logs a formatted message with INFO priority
 func (l *Logger) Infof(format string, args ...interface{}) {
 	l.Info(fmt.Sprintf(format, args...))
 }
 
+// Warnf logs a formatted message with WARN priority
 func (l *Logger) Warnf(format string, args ...interface{}) {
 	l.Warn(fmt.Sprintf(format, args...))
 }
 
+// Errorf logs a formatted message with ERROR priority
 func (l *Logger) Errorf(format string, args ...interface{}) {
 	l.Error(fmt.Sprintf(format, args...))
 }
 
+// Fatalf logs a formatted message with FATAL priority
 func (l *Logger) Fatalf(format string, args ...interface{}) {
 	l.Fatal(fmt.Sprintf(format, args...))
 }
