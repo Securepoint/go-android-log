@@ -23,5 +23,8 @@ logger.Debugf("Debug message: %d", 42)
 logger.Errorf("Something went wrong: %v", err)
 ```
 
+## Documentation
+[![Go Reference](https://pkg.go.dev/badge/github.com/Securepoint/go-android-log.svg)](https://pkg.go.dev/github.com/Securepoint/go-android-log@v1.0.0/androidlog)
+
 ## License
 [MIT](LICENSE)
