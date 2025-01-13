@@ -15,6 +15,10 @@ import "C"
 import (
 	"fmt"
 	"unsafe"
+
+	"database/sql"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // priority levels matching android/log.h
@@ -29,12 +33,18 @@ const (
 
 // Logger represents an Android logger instance
 type Logger struct {
-	tag string
+	tag         string
+	packageName string
 }
 
 // NewLogger creates a new Logger with the specified tag
 func NewLogger(tag string) *Logger {
 	return &Logger{tag: tag}
+}
+
+func (l *Logger) SetPackageName(packageName string) *Logger {
+	l.packageName = packageName
+	return l
 }
 
 // log writes a message with the specified priority level
@@ -45,6 +55,21 @@ func (l *Logger) log(priority int, msg string) {
 	defer C.free(unsafe.Pointer(message))
 
 	C.android_log(C.int(priority), tag, message)
+
+	db := l.getLogDb()
+	if db != nil {
+		defer db.Close()
+
+		stmt, err := db.Prepare("INSERT INTO log (tag, level, msg) VALUES (?, ?, ?)")
+		if err != nil {
+			fmt.Println(fmt.Errorf("Error preparing statement: %v", err))
+		}
+		defer stmt.Close()
+
+		if _, err := stmt.Exec(l.tag, priority, msg); err != nil {
+			fmt.Println(fmt.Errorf("Error inserting row: %v", err))
+		}
+	}
 }
 
 // Verbose logs a message with VERBOSE priority
@@ -105,4 +130,18 @@ func (l *Logger) Errorf(format string, args ...interface{}) {
 // Fatalf logs a formatted message with FATAL priority
 func (l *Logger) Fatalf(format string, args ...interface{}) {
 	l.Fatal(fmt.Sprintf(format, args...))
+}
+
+func (l *Logger) getLogDb() *sql.DB {
+	if l.packageName == "" {
+		return nil
+	}
+
+	db, err := sql.Open("sqlite3", "/data/data/"+l.packageName+"/databases/log.db")
+	if err != nil {
+		fmt.Println(fmt.Errorf("Error opening database: %v", err))
+		return nil
+	}
+
+	return db
 }
