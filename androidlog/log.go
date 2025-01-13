@@ -39,7 +39,7 @@ type Logger struct {
 
 // NewLogger creates a new Logger with the specified tag
 func NewLogger(tag string) *Logger {
-	return &Logger{tag: tag}
+	return &Logger{tag: tag, packageName: ""}
 }
 
 func (l *Logger) SetPackageName(packageName string) *Logger {
@@ -63,6 +63,7 @@ func (l *Logger) log(priority int, msg string) {
 		stmt, err := db.Prepare("INSERT INTO log (tag, level, msg) VALUES (?, ?, ?)")
 		if err != nil {
 			fmt.Println(fmt.Errorf("Error preparing statement: %v", err))
+			return
 		}
 		defer stmt.Close()
 
