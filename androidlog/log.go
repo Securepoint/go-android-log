@@ -35,6 +35,7 @@ const (
 type Logger struct {
 	tag         string
 	packageName string
+	enabled     bool
 }
 
 // NewLogger creates a new Logger with the specified tag
@@ -47,8 +48,17 @@ func (l *Logger) SetPackageName(packageName string) *Logger {
 	return l
 }
 
+func (l *Logger) SetEnabled(enabled bool) *Logger {
+	l.enabled = enabled
+	return l
+}
+
 // log writes a message with the specified priority level
 func (l *Logger) log(priority int, msg string) {
+	if !l.enabled {
+		return
+	}
+
 	tag := C.CString(l.tag)
 	message := C.CString(msg)
 	defer C.free(unsafe.Pointer(tag))

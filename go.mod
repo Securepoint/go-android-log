@@ -2,4 +2,4 @@ module github.com/Securepoint/go-android-log
 
 go 1.23
 
-require github.com/mattn/go-sqlite3 v1.14.24 // indirect
+require github.com/mattn/go-sqlite3 v1.14.24
